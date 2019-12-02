@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Giphy</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #search-form {
+            margin-bottom: 2em;
+            background: rgb(77, 75, 75);
+            height: 30px;
+            display:flex;
+            align-items: center;
+        }
+        .container {
+            margin: auto 0; 
+        }
+        #results {
+            width: calc(200px * 4 + 3em);
+            margin: auto;
+            columns: 4;
+            column-gap: 1em;
+        }
+        .item {
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <header>
+            <form id="search-form">
+                <input id="searchbar" type="text" placeholder="Search">
+                <button type="submit">Search</button>
+            </form> 
+
+        </header>
+
+        <div id="results">
+            <!-- GIFs go here -->
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const searchForm = document.getElementById('search-form')
+        const searchInput = document.getElementById('searchbar')
+        const resultsEl = document.getElementById('results')
+
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault()
+            const q = searchInput.value
+            if (q == '') {
+                search('cats')
+            }
+            search(q)
+        })
+
+        function search(q) {
+            const apiKey = "l8wCo2sFG0CAtZIKeu7TBUjxBN3hFp0G"
+            const path = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${q}`
+
+            fetch(path).then(function(res) {
+                return res.json() // another Promise object
+            }).then(function(json) {
+                let resultsHTML = ''
+
+                json.data.forEach(function(obj) {
+                    const url = obj.images.fixed_width.url
+                    const width = obj.images.fixed_width.width
+                    const height = obj.images.fixed_width.height
+                    resultsHTML += `<img 
+                    class="item"
+                    src="${url}" 
+                    width=${width} 
+                    height=${height}
+                    alt="${obj.title}"
+                    >`
+                })
+                resultsEl.innerHTML = resultsHTML
+            }).catch(function(err) {
+                console.log(err.message)
+            })
+        }
+        //
+        
+        
+    </script>
+</body>
+</html>
